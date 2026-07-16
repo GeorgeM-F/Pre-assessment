@@ -14,9 +14,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   $pdo->exec("DELETE FROM risposte_preassessment_prova");     // Pulisce la tabella prima di aggiungere i nuovi valori
   $domvals = array_fill(0, 70, array_fill(0, 6, ""));     // Crea una tabella...
-  foreach ($_POST as $nom => $val) {     // ...e la riempie con i valori ottenuti dal form
-    $idom = $nom[0];     // primo carattere della chiave
-    switch (substr($nom, 1)) {     // resto della chiave
+  foreach ($_POST as $nom => $val) {     // ...e si prepara a riempirla con i valori ottenuti dal form
+    $idom = substr($nom, 0, 2);     // primi 2 caratteri della chiave (che corrispondono al numero a 2 cifre, vedi sotto)
+    switch (substr($nom, 2)) {     // resto della chiave
       case "risp":
         $tdom = 1;
         break;
@@ -33,8 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $tdom = 5;
         break;
     }
-    $domvals[$idom-1][0] = $idom;
-    $domvals[$idom-1][$tdom] = $val;
+    $domvals[intval($idom-1)][0] = $idom;
+    $domvals[intval($idom-1)][intval($tdom)] = $val;     // Riempimento tabella
   }
   foreach ($domvals as $riga) {
     $stmt = $pdo->prepare("INSERT INTO risposte_preassessment_prova (id_domanda, risposta, descrizione, autovalutazione, priorità, note) VALUES (:idom, :risp, :desc, :autoval, :prior, :not)");
@@ -86,14 +86,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <?php     // REPLICAZIONE DOMANDA PER OGNI ENTRY DELL'ARRAY
   $n=0;     // Indice per la numerazione delle domande
   foreach ($domarr as $i) {
-    $n=$n+1;
+    $n=sprintf("%02d", $n+1);     // Aggiorna l'indice e lo converte in stringa a 2 cifre
     echo '
     <div class="sez">
       <p>Domanda '.$n.' di 70:</p>
       <h2>'.$i.'</h2>
       <div>
         <label><br>Risposta:<br></label>
-        <input type="hidden" name="i" value='.$n.'>     //===IMPORTANTE!!!===//
         <input type="radio" name="'.$n.'risp" value="no"><label class="d"><strong>no</strong></label>
         <input type="radio" name="'.$n.'risp" value="in parte"><label class="d"><strong>in parte</strong></label>
         <input type="radio" name="'.$n.'risp" value="sì"><label class="d"><strong>sì</strong></label>

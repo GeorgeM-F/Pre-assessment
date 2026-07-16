@@ -1,8 +1,7 @@
 <?php
 session_start();     // Inizio nuova sessione
-$db_file = 'database.db';     // Connessione al database
-try {
-  $pdo = new PDO("sqlite:" . $db_file);
+try {     // Connessione al database
+  $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
