@@ -1,7 +1,7 @@
 <?php
 session_start();     // Prova sessione precedente
 try {     // Connessione al database
-  $pdo = new PDO("sqlite:" . 'database.db');
+  $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
@@ -14,14 +14,25 @@ $inparte = count($stmt->fetchALL());     // Numero di elementi nell'array
 $stmt = $pdo->query("SELECT risposta FROM risposte_preassessment_prova WHERE risposta = 'sì'");     //Array di risposte "sì"
 $si = count($stmt->fetchALL());     // Numero di elementi nell'array
 
-$vals = array_fill(0, 10, array_fill(0, 5, 0));     // Tabella dei valori intermedi
-// QUI IL CODICE PER RIEMPIRE DOMVALS
-foreach ($vals as $tem) {
-  foreach ($tem as $crit) {
+// TABELLA DEI VALORI INTERMEDI:
+$vals = array_fill(0, 10, ["criterio_strategie", "criterio_politiche", "criterio_risorse", "criterio_obiettivi", "criterio_metriche"]);
 
+foreach ($vals as $tem) {
+  foreach ($vals as $crit) {
+
+// DALLE DOMANDE SELEZIONA GLI INDICI DI QUELLE CON MACRO-AREA = $tem E $crit = 1
+    $sqli = "SELECT id_domanda FROM domande WHERE risposta = ".$tem." AND ".$crit." = 1";     //query salvata prima come stringa
+    $stmt = $pdo->query($sqli);
+    $indici = $stmt->fetchALL();
+// DALLE RISPOSTE SELEZIONA GLI AUTOVAL E PRIOR CON QUELL'INDICE
+    $sqli = "SELECT autovalutazione, priorità FROM risposte_preassessment_prova WHERE id_domanda IN ".$indici;
+    $stmt = $pdo->query($sqli);
+    $coppie_valori = $stmt->fetchALL();
+// Ogni valore := media dei valori (prior/autoval)/3*100 delle domande attinenti a tale macro-tema e a tale criterio
+    //$vals[$tem][$crit] = (espressione...)
   }
 }
-// Ogni valore := media dei valori (prior/autoval)/3*100 delle domande attinenti a tale macro-tema e a tale criterio
+
 $e1 = array_sum($vals[0])/5;
 $e2 = array_sum($vals[1])/5;
 $e3 = array_sum($vals[2])/5;
