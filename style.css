@@ -123,3 +123,7 @@ a:active {
 .bot:active, button:active {
   background-color: rgba(128,0,0,0.5);
 }
+
+hr {
+  margin: 6px 6px 6px 6px;
+}
