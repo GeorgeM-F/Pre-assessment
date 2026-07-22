@@ -5,8 +5,10 @@ try {     // Connessione al database
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
-$messaggio = "";     // Crea parti di HTML da visualizzare successivamente
+
+$messaggio = "";     // Parti di HTML da riempire e visualizzare successivamente
 $link = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $nome = isset($_POST['nome']) ? trim($_POST['nome']) : '';
   $iva = isset($_POST['iva']) ? trim($_POST['iva']) : '';
@@ -18,16 +20,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $tipo = isset($_POST['tipo']) ? trim($_POST['tipo']) : '';
   $email = isset($_POST['email']) ? trim($_POST['email']) : '';
   $password = isset($_POST['password']) ? trim($_POST['password']) : '';
-
   // CONTROLLO EVENTUALI DOPPIONI
-  $stmt = $pdo->prepare("SELECT COUNT(*) FROM aziende WHERE indirizzo_email = :email OR password = :password");
+  $stmt = $pdo->prepare("SELECT COUNT(*) FROM aziende WHERE indirizzo_email = :email OR password = :password");     // QUERY (PER L'INSERIMENTO DEI DATI IN MODO SICURO: invece dei valori usiamo dei segnaposto (":"))
   $stmt->execute([':email' => $email, ':password' => $password]);
   if ($stmt->fetchColumn() > 0) {
     $messaggio = "<p style='color: red;'>Impossibile procedere: esistono già aziende con tali credenziali. Scegli un altro indirizzo e-mail o password.";
   } else {
-
-    // QUERY SQL PER L'INSERIMENTO DEI DATI IN MODO SICURO: invece dei valori usiamo dei segnaposto (":")
-    $stmt = $pdo->prepare("INSERT INTO aziende (ragione_sociale, partita_iva, codice_fiscale, settore, data_creazione, sede, codice_ateco, tipo, indirizzo_email, password) VALUES (:nome, :iva, :fiscale, :settore, :data, :sede, :codice, :tipo, :email, :password)");
+    $stmt = $pdo->prepare("INSERT INTO aziende (ragione_sociale, partita_iva, codice_fiscale, settore, data_creazione, sede, codice_ateco, tipo, indirizzo_email, password) VALUES (:nome, :iva, :fiscale, :settore, :data, :sede, :codice, :tipo, :email, :password)");     // QUERY (PER L'INSERIMENTO DEI DATI IN MODO SICURO: invece dei valori usiamo dei segnaposto (":"))
     $stmt->bindParam(':nome', $nome, PDO::PARAM_STR);     // qui si definiscono i segnaposto
     $stmt->bindParam(':iva', $iva, PDO::PARAM_STR);
     $stmt->bindParam(':fiscale', $fiscale, PDO::PARAM_STR);
@@ -38,8 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':tipo', $tipo, PDO::PARAM_STR);
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->bindParam(':password', $password, PDO::PARAM_STR);
-
-
     if ($stmt->execute()) {     // Definisce le parti di HTML da visualizzare a seconda dell'esito
       $messaggio = "<p style='color: green;'>I dati della tua azienda sono stati inseriti con successo! Vai alla pagina di login:</p>";
       $link = "<a class='bot' href='login.php'>ACCEDI</a>";
@@ -56,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Pre-assessment - inserimento dati</title>
+<title>Pre-assessment - Registrazione</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

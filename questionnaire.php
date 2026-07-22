@@ -1,18 +1,27 @@
 <?php
-session_start();     // Prova sessione precedente
-try {     // Connessione al database
+session_start();
+try {
   $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
-$messaggio = "";     // Crea parti di HTML da visualizzare successivamente
-$link = "";     // >>
+
+$messaggio = "";
+$link = "";
+
 $domquer = $pdo->query("SELECT domanda FROM domande");     // Fa una query di tutte le domande presenti nella tabella...
 $domarr = $domquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come array.
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-  $pdo->exec("DELETE FROM risposte_preassessment_prova");     // Pulisce la tabella prima di aggiungere i nuovi valori
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // Aggiunta nuova prova e selezione id prova:
+  $aggpro = $pdo->prepare("INSERT INTO prove_preassessment (id_azienda) VALUES (:iaz)");     // Non c'è bisogno di inserire l'id prova (è automatico)
+  $aggpro->execute([':iaz' => $_SESSION["tuoid"]]);
+  $numpro = $pdo->prepare("SELECT id_prova FROM prove_preassessment WHERE id_azienda = :tuoid ORDER BY id_prova DESC LIMIT 1");     // Prende l'id dell'ultima prova (quella appena aggiunta)
+  $numpro->execute([':tuoid' => $_SESSION["tuoid"]]);
+  $iaz = $_SESSION["tuoid"];
+  $ipro = ($numpro->fetchColumn());
+  // Preparazione aggiunta nuove risposte:
   $domvals = array_fill(0, 70, array_fill(0, 6, ""));     // Crea una tabella...
   foreach ($_POST as $nom => $val) {     // ...e si prepara a riempirla con i valori ottenuti dal form
     $idom = substr($nom, 0, 2);     // primi 2 caratteri della chiave (che corrispondono al numero a 2 cifre, vedi sotto)
@@ -37,13 +46,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $domvals[intval($idom-1)][intval($tdom)] = $val;     // Riempimento tabella
   }
   foreach ($domvals as $riga) {
-    $stmt = $pdo->prepare("INSERT INTO risposte_preassessment_prova (id_domanda, risposta, descrizione, autovalutazione, priorità, note) VALUES (:idom, :risp, :desc, :autoval, :prior, :not)");
+    $stmt = $pdo->prepare("INSERT INTO risposte_preassessment (id_azienda, id_prova, id_domanda, risposta, descrizione, autovalutazione, priorità, note) VALUES (:iaz, :ipro, :idom, :risp, :desc, :autoval, :prior, :not)");
     $idom = $riga[0];
     $risp = $riga[1];
     $desc = $riga[2];
     $autoval = $riga[3];
     $prior = $riga[4];
     $not = $riga[5];
+    $stmt->bindValue(':iaz', $iaz, PDO::PARAM_INT);
+    $stmt->bindValue(':ipro', $ipro, PDO::PARAM_INT);
     $stmt->bindValue(':idom', $idom, PDO::PARAM_INT);
     $stmt->bindValue(':risp', $risp, PDO::PARAM_STR);
     $stmt->bindValue(':desc', $desc, PDO::PARAM_STR);
@@ -53,8 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $stmt = 1;
   }
-
-  if ($stmt == 1) {     // Definisce le parti di HTML da visualizzare a seconda dell'esito
+  if ($stmt == 1) {
     $messaggio = "<p style='color: green;'>Le tue risposte sono state inserite con successo! Ora puoi visualizzare il report:</p>";
     $link = "<a class='bot' href='results.php'>GUARDA I RISULTATI</a>";
   } else {
@@ -69,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Pre-assessment - questionario</title>
+<title>Pre-assessment - Questionario</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

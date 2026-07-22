@@ -1,24 +1,28 @@
 <?php
 session_start();     // Inizio nuova sessione
-try {     // Connessione al database
+try {
   $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
-$messaggio = "";     // Crea parti di HTML da visualizzare successivamente
+
+$messaggio = "";
 $link = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $email = isset($_POST['email']) ? trim($_POST['email']) : '';
   $password = isset($_POST['password']) ? trim($_POST['password']) : '';
-  // QUERY SQL PER IL CONFRONTO TRA I DATI INSERITI E QUELLI NEL DATABASE
+  // QUERY PER CONTROLLARE SE I DATI INSERITI CORRISPONDONO
   $stmt = $pdo->prepare("SELECT COUNT(*) FROM aziende WHERE indirizzo_email = :email AND password = :password");
-  if ($stmt->execute([':email' => $email, ':password' => $password])) {     // Definisce le parti di HTML da visualizzare a seconda dell'esito
+  if ($stmt->execute([':email' => $email, ':password' => $password])) {
     if ($stmt->fetchColumn() > 0) {
+      // QUERY PER ESTRARRE I DATI CON CUI RIEMPIRE LA SESSIONE
       $stmt = $pdo->prepare("SELECT * FROM aziende WHERE indirizzo_email = :email AND password = :password");
       $stmt->execute([':email' => $email, ':password' => $password]);
       $dati = $stmt->fetch(PDO::FETCH_NUM);
-      $_SESSION["tuonome"]=$dati[1];     // Riempimento sessione
+      $_SESSION["tuoid"]=$dati[0];     // Riempimento sessione
+      $_SESSION["tuonome"]=$dati[1];
       $_SESSION["tuaiva"]=$dati[2];
       $_SESSION["tuocodice"]=$dati[3];
       $_SESSION["tuosettore"]=$dati[4];
@@ -45,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Pre-assessment - inserimento dati</title>
+<title>Pre-assessment - Accesso</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

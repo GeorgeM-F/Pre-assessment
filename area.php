@@ -1,15 +1,15 @@
 <?php
-session_start();     // Prova sessione precedente
-try {     // Connessione al database
+session_start();     // Continua sessione precedente
+try {
   $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
 
-$linkquer = $pdo->query("SELECT id_prova FROM prove_preassessment");     // Fa una query di tutte le prove presenti nella tabella...
+$linkquer = $pdo->prepare("SELECT id_prova FROM prove_preassessment WHERE id_azienda = :tuoid");     // Fa una query di tutte le prove presenti nella tabella...
+$linkquer->execute([':tuoid' => $_SESSION["tuoid"]]);
 $linkarr = $linkquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come array.
-$linkarr = [0,1,2,3,4,5,6,7,8,9];     //Cancella questa riga una volta fatto
 ?>
 
 
@@ -18,7 +18,7 @@ $linkarr = [0,1,2,3,4,5,6,7,8,9];     //Cancella questa riga una volta fatto
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>Pre-assessment - inserimento dati</title>
+<title>Pre-assessment - Area Riservata</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,6 +32,7 @@ $linkarr = [0,1,2,3,4,5,6,7,8,9];     //Cancella questa riga una volta fatto
     <h2>Dati azienda:</h2>
     <hr>
     <?php
+      echo "<p>ID azienda: <strong>".$_SESSION["tuoid"]."</strong></p>";     // Elimina questa riga una volta finito il progetto
       echo "<p>Ragione sociale: <strong>".$_SESSION["tuonome"]."</strong></p>";
       echo "<p>Partita IVA: <strong>".$_SESSION["tuaiva"]."</strong></p>";
       echo "<p>Codice fiscale: <strong>".$_SESSION["tuocodice"]."</strong></p>";

@@ -1,5 +1,5 @@
 <?php
-//echo "<p>(versione di prova)</p>";
+//Eventuale codice PHP; Cambiare titolo della pagina una volta aggiunti nuovi questionari.
 ?>
 
 <!DOCTYPE html>
