@@ -66,6 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   if ($stmt == 1) {
     $messaggio = "<p style='color: green;'>Le tue risposte sono state inserite con successo! Ora puoi visualizzare il report:</p>";
+    $_SESSION["qualeprova"] = $ipro;
     $link = "<a class='bot' href='results.php'>GUARDA I RISULTATI</a>";
   } else {
     $messaggio = "<p style='color: red;'>ERRORE: non è stato possibile salvare le tue risposte.</p>";

@@ -1,5 +1,5 @@
 <?php
-
+// Definizione sommatoria
 function sommatoria(array $array) {
   foreach ($array as $value) {
     if (!is_numeric($value)) {
@@ -9,7 +9,7 @@ function sommatoria(array $array) {
   return array_sum($array);
 }
 
-session_start();     // Prova sessione precedente
+session_start();     // Continuazione sessione precedente
 try {     // Connessione al database
   $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -17,11 +17,11 @@ try {     // Connessione al database
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
 
-$stmt = $pdo->query("SELECT risposta FROM risposte_preassessment_prova WHERE risposta = 'no'");     //Array di risposte "no"
+$stmt = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'no'");     //Array di risposte "no"
 $no = count($stmt->fetchALL());     // Numero di elementi nell'array
-$stmt2 = $pdo->query("SELECT risposta FROM risposte_preassessment_prova WHERE risposta = 'in parte'");     //Array di risposte "in parte"
+$stmt2 = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'in parte'");     //Array di risposte "in parte"
 $inparte = count($stmt2->fetchALL());     // Numero di elementi nell'array
-$stmt3 = $pdo->query("SELECT risposta FROM risposte_preassessment_prova WHERE risposta = 'sì'");     //Array di risposte "sì"
+$stmt3 = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'sì'");     //Array di risposte "sì"
 $si = count($stmt3->fetchALL());     // Numero di elementi nell'array
 
 // TABELLA DEI VALORI INTERMEDI:
@@ -34,8 +34,10 @@ foreach ($vals as $temind => $tem) {
     $indici = $stmt4->fetchALL(PDO::FETCH_COLUMN, 0);
     $placehold = implode(',', array_fill(0, count($indici), '?'));
 // DALLE RISPOSTE SELEZIONA GLI AUTOVAL E PRIOR CON QUELL'INDICE
-    $sqli5 = "SELECT autovalutazione, priorità FROM risposte_preassessment_prova WHERE id_domanda IN ($placehold)";     // AND autovalutazione IS NOT NULL AND priorità IS NOT NULL
+    $sqli5 = "SELECT autovalutazione, priorità FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND id_domanda IN ($placehold)";
     $stmt5 = $pdo->prepare($sqli5);
+    //$stmt5->bindValue(':tuoid', $_SESSION["tuoid"], PDO::PARAM_INT);
+    //$stmt5->bindValue(':idpro', $_SESSION["qualeprova"], PDO::PARAM_INT);
     $stmt5->execute($indici);
     $coppie_valori = $stmt5->fetchALL();     //aggiungi PDO::FETCH_ASSOC ?
     $valori_combinati = [];
