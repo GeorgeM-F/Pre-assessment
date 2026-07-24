@@ -1,5 +1,8 @@
 <?php
-// Definizione sommatoria
+// CARICAMENTO LIBRERIE PER IL REPORT
+require 'vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\IOFactory;
+// DEFINIZIONE FUNZIONE DI SOMMATORIA
 function sommatoria(array $array) {
   foreach ($array as $value) {
     if (!is_numeric($value)) {
@@ -8,7 +11,7 @@ function sommatoria(array $array) {
   }
   return array_sum($array);
 }
-
+// INIZIALIZZAZIONE
 session_start();     // Continuazione sessione precedente
 try {     // Connessione al database
   $pdo = new PDO("sqlite:database.db");
@@ -16,13 +19,13 @@ try {     // Connessione al database
 } catch (PDOException $e) {
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
-
-if (isset($_GET['provaperta'])) {     // Controlla se si è effettuato l'accesso dalla lista di prove passate, e da quale
+// CONTROLLA SE SI E' EFFETTUATO L'ACCESSO DALLA LISTA DI PROVE PASSATE
+if (isset($_GET['provaperta'])) {
   $danumaid = $pdo->query("SELECT id_prova FROM prove_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]);     //Prove fatte dalla presente azienda
   $listaprove = $danumaid->fetchAll(PDO::FETCH_COLUMN);
   $_SESSION["qualeprova"] = $listaprove[$_GET['provaperta']-1];
 }
-
+// DETERMINA IL NUMERO DI RISPOSTE NO, IN PARTE, SI
 $stmt = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'no'");     //Array di risposte "no"
 $no = count($stmt->fetchALL());     // Numero di elementi nell'array
 $stmt2 = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'in parte'");     //Array di risposte "in parte"
@@ -34,16 +37,14 @@ $si = count($stmt3->fetchALL());     // Numero di elementi nell'array
 $vals = array_fill(0, 10, ["criterio_strategie", "criterio_politiche", "criterio_risorse", "criterio_obiettivi", "criterio_metriche"]);
 foreach ($vals as $temind => $tem) {
   foreach ($tem as $critind => $crit) {
-// DALLE DOMANDE SELEZIONA GLI INDICI DI QUELLE CON MACRO-AREA = $tem E $crit = 1
+    // DALLE DOMANDE SELEZIONA GLI INDICI DI QUELLE CON MACRO-AREA = $tem E $crit = 1
     $sqli4 = "SELECT id_domanda FROM domande WHERE macro_tematica = ".$temind." AND ".$crit." = 1";     //query salvata prima come stringa
     $stmt4 = $pdo->query($sqli4);
     $indici = $stmt4->fetchALL(PDO::FETCH_COLUMN, 0);
     $placehold = implode(',', array_fill(0, count($indici), '?'));
-// DALLE RISPOSTE SELEZIONA GLI AUTOVAL E PRIOR CON QUELL'INDICE
+    // DALLE RISPOSTE SELEZIONA GLI AUTOVAL E PRIOR CON QUELL'INDICE
     $sqli5 = "SELECT autovalutazione, priorità FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND id_domanda IN ($placehold)";
     $stmt5 = $pdo->prepare($sqli5);
-    //$stmt5->bindValue(':tuoid', $_SESSION["tuoid"], PDO::PARAM_INT);
-    //$stmt5->bindValue(':idpro', $_SESSION["qualeprova"], PDO::PARAM_INT);
     $stmt5->execute($indici);
     $coppie_valori = $stmt5->fetchALL();     //aggiungi PDO::FETCH_ASSOC ?
     $valori_combinati = [];
@@ -53,7 +54,7 @@ foreach ($vals as $temind => $tem) {
     try {$vals[$temind][$critind] = sommatoria($valori_combinati)/count($valori_combinati);} catch (DivisionByZeroError | TypeError | Error $e) {$vals[$temind][$critind] = "niente";};
   }
 }
-
+// DEFINIZIONE VALORI FINALI
 try {$e1 = sommatoria($vals[0])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$e1 = "valori non disponibili";};
 try {$e2 = sommatoria($vals[1])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$e2 = "valori non disponibili";};
 try {$e3 = sommatoria($vals[2])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$e3 = "valori non disponibili";};
@@ -65,16 +66,60 @@ try {$s3 = sommatoria($vals[7])/5;} catch (DivisionByZeroError | TypeError | Err
 try {$s4 = sommatoria($vals[8])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$s4 = "valori non disponibili";};
 try {$g1 = sommatoria($vals[9])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$g1 = "valori non disponibili";};
 // ATTENZIONE: LE PROSSIME 4 RIGHE DANNO ERRORE (Undefined array key, da 5 a 9), SCOPRIRE IL MOTIVO
-try {$strategie = ($vals[0][0]+$vals[0][1]+$vals[0][2]+$vals[0][3]+$vals[0][4]+$vals[0][5]+$vals[0][6]+$vals[0][7]+$vals[0][8]+$vals[0][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$strategie = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
-try {$politiche = ($vals[1][0]+$vals[1][1]+$vals[1][2]+$vals[1][3]+$vals[1][4]+$vals[1][5]+$vals[1][6]+$vals[1][7]+$vals[1][8]+$vals[1][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$politiche = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
-try {$risorse = ($vals[2][0]+$vals[2][1]+$vals[2][2]+$vals[2][3]+$vals[2][4]+$vals[2][5]+$vals[2][6]+$vals[2][7]+$vals[2][8]+$vals[2][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$risorse = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
-try {$obiettivi = ($vals[3][0]+$vals[3][1]+$vals[3][2]+$vals[3][3]+$vals[3][4]+$vals[3][5]+$vals[3][6]+$vals[3][7]+$vals[3][8]+$vals[3][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$obiettivi = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
-try {$metriche =  ($vals[4][0]+$vals[4][1]+$vals[4][2]+$vals[4][3]+$vals[4][4]+$vals[4][5]+$vals[4][6]+$vals[4][7]+$vals[4][8]+$vals[4][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$metriche = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
+try {$strategie = ($vals[0][0]+$vals[1][0]+$vals[2][0]+$vals[3][0]+$vals[4][0]+$vals[5][0]+$vals[6][0]+$vals[7][0]+$vals[8][0]+$vals[9][0])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$strategie = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
+try {$politiche = ($vals[0][1]+$vals[1][1]+$vals[2][1]+$vals[3][1]+$vals[4][1]+$vals[5][1]+$vals[6][1]+$vals[7][1]+$vals[8][1]+$vals[9][1])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$politiche = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
+try {$risorse = ($vals[0][2]+$vals[1][2]+$vals[2][2]+$vals[3][2]+$vals[4][2]+$vals[5][2]+$vals[6][2]+$vals[7][2]+$vals[8][2]+$vals[9][2])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$risorse = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
+try {$obiettivi = ($vals[0][3]+$vals[1][3]+$vals[2][3]+$vals[3][3]+$vals[4][3]+$vals[5][3]+$vals[6][3]+$vals[7][3]+$vals[8][3]+$vals[9][3])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$obiettivi = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
+try {$metriche = ($vals[0][4]+$vals[1][4]+$vals[2][4]+$vals[3][4]+$vals[4][4]+$vals[5][4]+$vals[6][4]+$vals[7][4]+$vals[8][4]+$vals[9][4])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$metriche = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
 try {$environmental = ($e1+$e2+$e3+$e4+$e5)/5;} catch (DivisionByZeroError | TypeError | Error $e) {$environmental = "valori non disponibili";};
 try {$social = ($s1+$s2+$s3+$s4)/4;} catch (DivisionByZeroError | TypeError | Error $e) {$social = "valori non disponibili";};
 try {$governance = ($g1)/1;} catch (DivisionByZeroError | TypeError | Error $e) {$governance = "valori non disponibili";};
 try {$complessivo = ($environmental+$social+$governance)/3;} catch (DivisionByZeroError | TypeError | Error $e) {$complessivo = "valori non disponibili";};
+
+// GENERAZIONE REPORT
+if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
+  // CARICAMENTO FOGLIO
+  $read = IOFactory::createReader('Xlsx');
+  $read->setIncludeCharts(true);
+  $spread = $read->load('report_template_simplified.xlsx');
+  // INSERIMENTO VALORI
+  $sheet = $spread->getSheetByName('Foglio1');
+  $sheet->setCellValue('B1', $complessivo);
+  $sheet->setCellValue('B2', $environmental);
+  $sheet->setCellValue('B3', $social);
+  $sheet->setCellValue('B4', $governance);
+  $sheet->setCellValue('B5', $e1);
+  $sheet->setCellValue('B6', $e2);
+  $sheet->setCellValue('B7', $e3);
+  $sheet->setCellValue('B8', $e4);
+  $sheet->setCellValue('B9', $e5);
+  $sheet->setCellValue('B10', $s1);
+  $sheet->setCellValue('B11', $s2);
+  $sheet->setCellValue('B12', $s3);
+  $sheet->setCellValue('B13', $s4);
+  $sheet->setCellValue('B14', $g1);
+  $sheet->setCellValue('B15', $strategie);
+  $sheet->setCellValue('B16', $politiche);
+  $sheet->setCellValue('B17', $risorse);
+  $sheet->setCellValue('B18', $obiettivi);
+  $sheet->setCellValue('B19', $metriche);
+  $sheet->setCellValue('B20', $no/70*100);
+  $sheet->setCellValue('B21', $inparte/70*100);
+  $sheet->setCellValue('B22', $si/70*100);
+  // (...)
+  if (ob_get_level()) {ob_end_clean();}     // Pulisce il buffer di output
+  header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');     // Imposta le intestazioni HTTP per il download
+  header('Content-Disposition: attachment;filename="Ultimo_Report.xlsx"');
+  header('Cache-Control: max-age=0');
+  // INVIA IL RISULTATO AL BROWSER PER IL SALVATAGGIO
+  $written = IOFactory::createWriter($spread, 'Xlsx');
+  $written->setIncludeCharts(true);
+  $written->save('php://output');
+  exit;
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="it">
@@ -140,7 +185,7 @@ try {$complessivo = ($environmental+$social+$governance)/3;} catch (DivisionByZe
     <p>(...)</p>
   </div>
   <p>Puoi scaricare il report completo in formato .pdf cliccando nel link sottostante:</p>
-  <a class="bot" href="report.php">SCARICA IL REPORT</a>
+  <a class="bot" href="results.php?azione=scarica">SCARICA IL REPORT</a>
   <a class="bot" href="area.php">TORNA ALLA TUA AREA RISERVATA</a>
   <a class="bot" href="index.php">TORNA ALL'INIZIO</a>
 </div>
