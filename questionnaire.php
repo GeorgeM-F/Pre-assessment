@@ -135,7 +135,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php echo $link; ?>
   </form>
 
-  <a class="bot" href="index.php">TORNA INDIETRO</a>
+  <a class="bot" href="area.php">TORNA ALLA TUA AREA RISERVATA</a>
+  <a class="bot" href="index.php">TORNA ALL'INIZIO</a>
 </div>
 
 </body>

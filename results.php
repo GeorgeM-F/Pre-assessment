@@ -17,6 +17,12 @@ try {     // Connessione al database
   die("ERRORE! NON E' STATO POSSIBILE CONNETTERSI AL DATABASE." . $e->getMessage());
 }
 
+if (isset($_GET['provaperta'])) {     // Controlla se si è effettuato l'accesso dalla lista di prove passate, e da quale
+  $danumaid = $pdo->query("SELECT id_prova FROM prove_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]);     //Prove fatte dalla presente azienda
+  $listaprove = $danumaid->fetchAll(PDO::FETCH_COLUMN);
+  $_SESSION["qualeprova"] = $listaprove[$_GET['provaperta']-1];
+}
+
 $stmt = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'no'");     //Array di risposte "no"
 $no = count($stmt->fetchALL());     // Numero di elementi nell'array
 $stmt2 = $pdo->query("SELECT risposta FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"]." AND risposta = 'in parte'");     //Array di risposte "in parte"
@@ -58,6 +64,7 @@ try {$s2 = sommatoria($vals[6])/5;} catch (DivisionByZeroError | TypeError | Err
 try {$s3 = sommatoria($vals[7])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$s3 = "valori non disponibili";};
 try {$s4 = sommatoria($vals[8])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$s4 = "valori non disponibili";};
 try {$g1 = sommatoria($vals[9])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$g1 = "valori non disponibili";};
+// ATTENZIONE: LE PROSSIME 4 RIGHE DANNO ERRORE (Undefined array key, da 5 a 9), SCOPRIRE IL MOTIVO
 try {$strategie = ($vals[0][0]+$vals[0][1]+$vals[0][2]+$vals[0][3]+$vals[0][4]+$vals[0][5]+$vals[0][6]+$vals[0][7]+$vals[0][8]+$vals[0][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$strategie = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
 try {$politiche = ($vals[1][0]+$vals[1][1]+$vals[1][2]+$vals[1][3]+$vals[1][4]+$vals[1][5]+$vals[1][6]+$vals[1][7]+$vals[1][8]+$vals[1][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$politiche = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
 try {$risorse = ($vals[2][0]+$vals[2][1]+$vals[2][2]+$vals[2][3]+$vals[2][4]+$vals[2][5]+$vals[2][6]+$vals[2][7]+$vals[2][8]+$vals[2][9])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$risorse = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
@@ -134,7 +141,8 @@ try {$complessivo = ($environmental+$social+$governance)/3;} catch (DivisionByZe
   </div>
   <p>Puoi scaricare il report completo in formato .pdf cliccando nel link sottostante:</p>
   <a class="bot" href="report.php">SCARICA IL REPORT</a>
-  <a class="bot" href="index.php">TORNA INDIETRO</a>
+  <a class="bot" href="area.php">TORNA ALLA TUA AREA RISERVATA</a>
+  <a class="bot" href="index.php">TORNA ALL'INIZIO</a>
 </div>
 
 </body>

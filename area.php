@@ -51,16 +51,20 @@ $linkarr = $linkquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come arr
       <a class="bot" href="questionnaire.php">Nuova prova</a>
       <p>Prove precedentemente effettuate:</p>
       <?php     // REPLICAZIONE LINK PER OGNI ENTRY DELL'ARRAY
-      $n=0;     // Indice per la numerazione dei link
-      foreach ($linkarr as $i) {
-        $n=$n+1;     // Aggiorna l'indice
-        echo '<a class="bot" href="questionnaire.php">Prova n° '.$n.'</a>';
+      if (count($linkarr)==0) {
+        echo '<p>Ancora nessuna. Clicca il link sovrastante per iniziare la tua prima prova.</p>';
+      } else {
+        $n=0;     // Indice per la numerazione dei link
+        foreach ($linkarr as $i) {
+          $n=$n+1;     // Aggiorna l'indice
+          echo '<a class="bot" href="results.php?provaperta='.$n.'">Prova n° '.$n.'</a>';     //"provaperta" è il valore che verrà utilizzato dalla pagina per selezionare i corrispondenti valori da visualizzare
+        }
       }
       ?>
     </div>
   </div>
 
-  <a class="bot" href="index.php">TORNA INDIETRO</a>
+  <a class="bot" href="index.php">ESCI</a>
 </div>
 
 </body>
