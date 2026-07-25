@@ -10,6 +10,11 @@ try {
 $linkquer = $pdo->prepare("SELECT id_prova FROM prove_preassessment WHERE id_azienda = :tuoid");     // Fa una query di tutte le prove presenti nella tabella...
 $linkquer->execute([':tuoid' => $_SESSION["tuoid"]]);
 $linkarr = $linkquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come array.
+
+$datequer = $pdo->prepare("SELECT data_prova FROM prove_preassessment WHERE id_azienda = :tuoid");     // Come sopra, ma prende le date
+$datequer->execute([':tuoid' => $_SESSION["tuoid"]]);
+$datearr = $datequer->fetchAll(PDO::FETCH_COLUMN);
+
 ?>
 
 
@@ -57,7 +62,7 @@ $linkarr = $linkquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come arr
         $n=0;     // Indice per la numerazione dei link
         foreach ($linkarr as $i) {
           $n=$n+1;     // Aggiorna l'indice
-          echo '<a class="bot" href="results.php?provaperta='.$n.'">Prova n° '.$n.'</a>';     //"provaperta" è il valore che verrà utilizzato dalla pagina per selezionare i corrispondenti valori da visualizzare
+          echo '<a class="bot" href="results.php?provaperta='.$n.'">Prova n° '.$n.'<br>(data esecuzione: '.$datearr[$n-1].')</a>';     //"provaperta" è il valore che verrà utilizzato dalla pagina per selezionare i corrispondenti valori da visualizzare
         }
       }
       ?>

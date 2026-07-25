@@ -15,8 +15,8 @@ $domarr = $domquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come array
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Aggiunta nuova prova e selezione id prova:
-  $aggpro = $pdo->prepare("INSERT INTO prove_preassessment (id_azienda) VALUES (:iaz)");     // Non c'è bisogno di inserire l'id prova (è automatico)
-  $aggpro->execute([':iaz' => $_SESSION["tuoid"]]);
+  $aggpro = $pdo->prepare("INSERT INTO prove_preassessment (id_azienda, data_prova) VALUES (:iaz, :dp)");     // Non c'è bisogno di inserire l'id prova (è automatico)
+  $aggpro->execute([':iaz' => $_SESSION["tuoid"], ':dp' => date('Y-m-d H:i:s')]);
   $numpro = $pdo->prepare("SELECT id_prova FROM prove_preassessment WHERE id_azienda = :tuoid ORDER BY id_prova DESC LIMIT 1");     // Prende l'id dell'ultima prova (quella appena aggiunta)
   $numpro->execute([':tuoid' => $_SESSION["tuoid"]]);
   $iaz = $_SESSION["tuoid"];
@@ -93,7 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <p>Rispondi alle seguenti domande:</p>
 
   <form action="" method="POST">
-
+  <?php echo $messaggio; ?>
+  <?php echo $link; ?>
   <?php     // REPLICAZIONE DOMANDA PER OGNI ENTRY DELL'ARRAY
   $n=0;     // Indice per la numerazione delle domande
   foreach ($domarr as $i) {
@@ -131,8 +132,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ?>
 
     <button type="submit">FINITO</button>
-    <?php echo $messaggio; ?>
-    <?php echo $link; ?>
   </form>
 
   <a class="bot" href="area.php">TORNA ALLA TUA AREA RISERVATA</a>
