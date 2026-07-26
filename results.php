@@ -65,7 +65,6 @@ try {$s2 = sommatoria($vals[6])/5;} catch (DivisionByZeroError | TypeError | Err
 try {$s3 = sommatoria($vals[7])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$s3 = "valori non disponibili";};
 try {$s4 = sommatoria($vals[8])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$s4 = "valori non disponibili";};
 try {$g1 = sommatoria($vals[9])/5;} catch (DivisionByZeroError | TypeError | Error $e) {$g1 = "valori non disponibili";};
-// ATTENZIONE: LE PROSSIME 4 RIGHE DANNO ERRORE (Undefined array key, da 5 a 9), SCOPRIRE IL MOTIVO
 try {$strategie = ($vals[0][0]+$vals[1][0]+$vals[2][0]+$vals[3][0]+$vals[4][0]+$vals[5][0]+$vals[6][0]+$vals[7][0]+$vals[8][0]+$vals[9][0])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$strategie = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
 try {$politiche = ($vals[0][1]+$vals[1][1]+$vals[2][1]+$vals[3][1]+$vals[4][1]+$vals[5][1]+$vals[6][1]+$vals[7][1]+$vals[8][1]+$vals[9][1])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$politiche = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
 try {$risorse = ($vals[0][2]+$vals[1][2]+$vals[2][2]+$vals[3][2]+$vals[4][2]+$vals[5][2]+$vals[6][2]+$vals[7][2]+$vals[8][2]+$vals[9][2])/10;} catch (DivisionByZeroError | TypeError | Error $e) {$risorse = "valori non disponibili";};     // Media di tutti i valori attinenti a tale criterio
@@ -76,7 +75,7 @@ try {$social = ($s1+$s2+$s3+$s4)/4;} catch (DivisionByZeroError | TypeError | Er
 try {$governance = ($g1)/1;} catch (DivisionByZeroError | TypeError | Error $e) {$governance = "valori non disponibili";};
 try {$complessivo = ($environmental+$social+$governance)/3;} catch (DivisionByZeroError | TypeError | Error $e) {$complessivo = "valori non disponibili";};
 
-// GENERAZIONE REPORT
+// GENERAZIONE REPORT SCARICABILE
 if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
   // CARICAMENTO FOGLIO
   $read = IOFactory::createReader('Xlsx');
@@ -117,6 +116,10 @@ if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
   $written->save('php://output');
   exit;
 }
+
+//PREPARAZIONE GIUDIZI FINALI
+$stmt6 = $pdo->query("SELECT tema, testo FROM suggerimenti");
+$giu = $stmt6->fetchALL();
 ?>
 
 
@@ -139,37 +142,37 @@ if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
       echo "<p class='log'>Azienda: <strong>".$_SESSION["tuonome"]."</strong></p>";
     ?>
     <div class="risez">
-      <?php echo "<h1>Punteggio complessivo:   ".$complessivo."%</h1>" ?>
+      <?php echo "<h1>Punteggio complessivo:   ".round($complessivo)."%</h1>" ?>
     </div>
     <div class="oriz">
       <div class="risez">
         <h1>Pilastri ESG</h1>
-        <?php echo "<h2>Environmental:   ".$environmental."%</h2>" ?>
-        <?php echo "<h2>Social:   ".$social."%</h2>" ?>
-        <?php echo "<h2>Governance:   ".$governance."%</h2>" ?>
+        <?php echo "<h2>Environmental:   ".round($environmental)."%</h2>" ?>
+        <?php echo "<h2>Social:   ".round($social)."%</h2>" ?>
+        <?php echo "<h2>Governance:   ".round($governance)."%</h2>" ?>
       </div>
       <div class="risez">
         <h1>Grado di priorità per ESRS specifico</h1>
-        <?php echo "<h2>E1:   ".$e1."%</h2>" ?>
-        <?php echo "<h2>E2:   ".$e2."%</h2>" ?>
-        <?php echo "<h2>E3:   ".$e3."%</h2>" ?>
-        <?php echo "<h2>E4:   ".$e4."%</h2>" ?>
-        <?php echo "<h2>E5:   ".$e5."%</h2>" ?>
-        <?php echo "<h2>S1:   ".$s1."%</h2>" ?>
-        <?php echo "<h2>S2:   ".$s2."%</h2>" ?>
-        <?php echo "<h2>S3:   ".$s3."%</h2>" ?>
-        <?php echo "<h2>S4:   ".$s4."%</h2>" ?>
-        <?php echo "<h2>G1:   ".$g1."%</h2>" ?>
+        <?php echo "<h2>E1:   ".round($e1)."%</h2>" ?>
+        <?php echo "<h2>E2:   ".round($e2)."%</h2>" ?>
+        <?php echo "<h2>E3:   ".round($e3)."%</h2>" ?>
+        <?php echo "<h2>E4:   ".round($e4)."%</h2>" ?>
+        <?php echo "<h2>E5:   ".round($e5)."%</h2>" ?>
+        <?php echo "<h2>S1:   ".round($s1)."%</h2>" ?>
+        <?php echo "<h2>S2:   ".round($s2)."%</h2>" ?>
+        <?php echo "<h2>S3:   ".round($s3)."%</h2>" ?>
+        <?php echo "<h2>S4:   ".round($s4)."%</h2>" ?>
+        <?php echo "<h2>G1:   ".round($g1)."%</h2>" ?>
       </div>
     </div>
     <div class="oriz">
       <div class="risez">
         <h1>Prioritizzazione delle categorie</h1>
-        <?php echo "<h2>Strategie:   ".$strategie."%</h2>" ?>
-        <?php echo "<h2>Politiche:   ".$politiche."%</h2>" ?>
-        <?php echo "<h2>Risorse:   ".$risorse."%</h2>" ?>
-        <?php echo "<h2>Obiettivi:   ".$obiettivi."%</h2>" ?>
-        <?php echo "<h2>Metriche:   ".$metriche."%</h2>" ?>
+        <?php echo "<h2>Strategie:   ".round($strategie)."%</h2>" ?>
+        <?php echo "<h2>Politiche:   ".round($politiche)."%</h2>" ?>
+        <?php echo "<h2>Risorse:   ".round($risorse)."%</h2>" ?>
+        <?php echo "<h2>Obiettivi:   ".round($obiettivi)."%</h2>" ?>
+        <?php echo "<h2>Metriche:   ".round($metriche)."%</h2>" ?>
       </div>
       <div class="risez">
         <h1>Distribuzione delle risposte al questionario</h1>
@@ -180,11 +183,43 @@ if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
     </div>
   </div>
   <div class="sez">
-    <h1>SUGGERIMENTI</h1>
-    <p>Ecco una serie di suggerimenti utili per migliorare la valutazione ESG della tua azienda:</p>
-    <p>(...)</p>
+    <h1>GIUDIZI FINALI E SUGGERIMENTI</h1>
+    <?php     // REPLICAZIONE GIUDIZI PER OGNI AREA TEMATICA
+    $temars = [$e1, $e2, $e3, $e4, $e5, $s1, $s2, $s3, $s4, $g1];
+    $n=0;     // Indice per la numerazione dei giudizi
+    foreach ($temars as $i) {
+      $n=$n+1;     // Aggiorna l'indice
+      switch (true) {     // Scelta giudizio in base al punteggio
+        case (0<$i && $i<=20):
+          $nplus = 0;
+          $col = '192,64,64';
+          break;
+        case (20<$i && $i<=40):
+          $nplus = 1;
+          $col = '192,128,64';
+          break;
+        case (40<$i && $i<=60):
+          $nplus = 2;
+          $col = '192,192,64';
+          break;
+        case (60<$i && $i<=80):
+          $nplus = 3;
+          $col = '128,192,64';
+          break;
+        case (80<$i && $i<=100):
+          $nplus = 4;
+          $col = '64,192,64';
+          break;
+      }
+      echo '
+      <div class="risez" style="border-color: rgba('.$col.', 1); background-color: rgba('.$col.', 0.25)">
+        <h2>'.$giu[$n*5-5][0].'</h2>
+        <p>'.$giu[$n*5-5+$nplus][1].'</p>
+      </div>';
+    }
+    ?>
   </div>
-  <p>Puoi scaricare il report completo in formato .pdf cliccando nel link sottostante:</p>
+  <p>Puoi scaricare il report completo in formato .xlsx cliccando nel link sottostante:</p>
   <a class="bot" href="results.php?azione=scarica">SCARICA IL REPORT</a>
   <a class="bot" href="area.php">TORNA ALLA TUA AREA RISERVATA</a>
   <a class="bot" href="index.php">TORNA ALL'INIZIO</a>

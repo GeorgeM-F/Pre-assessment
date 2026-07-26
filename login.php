@@ -31,14 +31,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $_SESSION["tuoateco"]=$dati[7];
       $_SESSION["tuotipo"]=$dati[8];
       $_SESSION["tuaemail"]=$dati[9];
-      $messaggio = "<p style='color: green;'>Accesso effettuato! Ora puoi visualizzare la tua area personale:</p>
-      <p style='color: green;'>(sei loggato come: <strong>".$_SESSION["tuonome"]."</strong>.)</p>";
+      $messaggio = "<p class='mess' style='color: green;'>Accesso effettuato! Ora puoi visualizzare la tua area personale:</p>
+      <p class='mess' style='color: green;'>(sei loggato come: <strong>".$_SESSION["tuonome"]."</strong>.)</p>";
       $link = "<a class='bot' href='area.php'>ENTRA</a>";
     } else {
-      $messaggio = "<p style='color: red;'>ACCESSO NEGATO: non esistono aziende con tali credenziali. Registrati o riprova.</p>";
+      $messaggio = "<p class='mess' style='color: red;'>ACCESSO NEGATO: non esistono aziende con tali credenziali. Registrati o riprova.</p>";
     }
   } else {
-    $messaggio = "<p style='color: red;'>ERRORE: non è stato possibile effettuare l'accesso.</p>";
+    $messaggio = "<p class='mess' style='color: red;'>ERRORE: non è stato possibile effettuare l'accesso.</p>";
   }
 }
 ?>

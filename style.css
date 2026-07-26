@@ -105,6 +105,11 @@ a:active {
   text-align: center;
 }
 
+.mess {
+  font-size: 24px;
+  text-align: center;
+}
+
 .bot, button {
   margin: 6px 6px 6px 6px;
   background-color: rgba(64,192,64,0.5);

@@ -38,10 +38,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->bindParam(':password', $password, PDO::PARAM_STR);
     if ($stmt->execute()) {     // Definisce le parti di HTML da visualizzare a seconda dell'esito
-      $messaggio = "<p style='color: green;'>I dati della tua azienda sono stati inseriti con successo! Vai alla pagina di login:</p>";
+      $messaggio = "<p class='mess' style='color: green;'>I dati della tua azienda sono stati inseriti con successo! Vai alla pagina di login:</p>";
       $link = "<a class='bot' href='login.php'>ACCEDI</a>";
     } else {
-      $messaggio = "<p style='color: red;'>ERRORE: non è stato possibile salvare i dati dell'azienda.</p>";
+      $messaggio = "<p class='mess' style='color: red;'>ERRORE: non è stato possibile salvare i dati dell'azienda.</p>";
     }
   }
 }
