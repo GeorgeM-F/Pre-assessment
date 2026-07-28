@@ -130,6 +130,7 @@ $giu = $stmt6->fetchALL();
 <meta charset="UTF-8">
 <title>Pre-assessment - risultati</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -147,38 +148,42 @@ $giu = $stmt6->fetchALL();
     <div class="oriz">
       <div class="risez">
         <h1>Pilastri ESG</h1>
-        <?php echo "<h2>Environmental:   ".round($environmental)."%</h2>" ?>
-        <?php echo "<h2>Social:   ".round($social)."%</h2>" ?>
-        <?php echo "<h2>Governance:   ".round($governance)."%</h2>" ?>
+        <?php //echo "<h2>Environmental:   ".round($environmental)."%</h2>" ?>
+        <?php //echo "<h2>Social:   ".round($social)."%</h2>" ?>
+        <?php //echo "<h2>Governance:   ".round($governance)."%</h2>" ?>
+        <canvas id="PilastriGrafico" width="400" height="200"></canvas>
       </div>
       <div class="risez">
         <h1>Grado di priorità per ESRS specifico</h1>
-        <?php echo "<h2>E1:   ".round($e1)."%</h2>" ?>
-        <?php echo "<h2>E2:   ".round($e2)."%</h2>" ?>
-        <?php echo "<h2>E3:   ".round($e3)."%</h2>" ?>
-        <?php echo "<h2>E4:   ".round($e4)."%</h2>" ?>
-        <?php echo "<h2>E5:   ".round($e5)."%</h2>" ?>
-        <?php echo "<h2>S1:   ".round($s1)."%</h2>" ?>
-        <?php echo "<h2>S2:   ".round($s2)."%</h2>" ?>
-        <?php echo "<h2>S3:   ".round($s3)."%</h2>" ?>
-        <?php echo "<h2>S4:   ".round($s4)."%</h2>" ?>
-        <?php echo "<h2>G1:   ".round($g1)."%</h2>" ?>
+        <?php //echo "<h2>E1:   ".round($e1)."%</h2>" ?>
+        <?php //echo "<h2>E2:   ".round($e2)."%</h2>" ?>
+        <?php //echo "<h2>E3:   ".round($e3)."%</h2>" ?>
+        <?php //echo "<h2>E4:   ".round($e4)."%</h2>" ?>
+        <?php //echo "<h2>E5:   ".round($e5)."%</h2>" ?>
+        <?php //echo "<h2>S1:   ".round($s1)."%</h2>" ?>
+        <?php //echo "<h2>S2:   ".round($s2)."%</h2>" ?>
+        <?php //echo "<h2>S3:   ".round($s3)."%</h2>" ?>
+        <?php //echo "<h2>S4:   ".round($s4)."%</h2>" ?>
+        <?php //echo "<h2>G1:   ".round($g1)."%</h2>" ?>
+        <canvas id="MacroTemiGrafico" width="400" height="200"></canvas>
       </div>
     </div>
     <div class="oriz">
       <div class="risez">
         <h1>Prioritizzazione delle categorie</h1>
-        <?php echo "<h2>Strategie:   ".round($strategie)."%</h2>" ?>
-        <?php echo "<h2>Politiche:   ".round($politiche)."%</h2>" ?>
-        <?php echo "<h2>Risorse:   ".round($risorse)."%</h2>" ?>
-        <?php echo "<h2>Obiettivi:   ".round($obiettivi)."%</h2>" ?>
-        <?php echo "<h2>Metriche:   ".round($metriche)."%</h2>" ?>
+        <?php //echo "<h2>Strategie:   ".round($strategie)."%</h2>" ?>
+        <?php //echo "<h2>Politiche:   ".round($politiche)."%</h2>" ?>
+        <?php //echo "<h2>Risorse:   ".round($risorse)."%</h2>" ?>
+        <?php //echo "<h2>Obiettivi:   ".round($obiettivi)."%</h2>" ?>
+        <?php //echo "<h2>Metriche:   ".round($metriche)."%</h2>" ?>
+        <canvas id="CategorieGrafico" width="400" height="200"></canvas>
       </div>
       <div class="risez">
         <h1>Distribuzione delle risposte al questionario</h1>
-        <?php echo "<h2>No:   ".round($no/70*100)."%</h2>" ?>
-        <?php echo "<h2>In parte:   ".round($inparte/70*100)."%</h2>" ?>
-        <?php echo "<h2>Sì:   ".round($si/70*100)."%</h2>" ?>
+        <?php //echo "<h2>No:   ".round($no/70*100)."%</h2>" ?>
+        <?php //echo "<h2>In parte:   ".round($inparte/70*100)."%</h2>" ?>
+        <?php //echo "<h2>Sì:   ".round($si/70*100)."%</h2>" ?>
+        <canvas id="RisposteGrafico" width="400" height="200"></canvas>
       </div>
     </div>
   </div>
@@ -190,7 +195,7 @@ $giu = $stmt6->fetchALL();
     foreach ($temars as $i) {
       $n=$n+1;     // Aggiorna l'indice
       switch (true) {     // Scelta giudizio in base al punteggio
-        case (0<$i && $i<=20):
+        case (0<=$i && $i<=20):
           $nplus = 0;
           $col = '192,64,64';
           break;
@@ -212,7 +217,7 @@ $giu = $stmt6->fetchALL();
           break;
       }
       echo '
-      <div class="risez" style="border-color: rgba('.$col.', 1); background-color: rgba('.$col.', 0.25)">
+      <div class="risez" style="border-color: rgba('.$col.', 1); background-color: rgba('.$col.', 0.5)">
         <h2>'.$giu[$n*5-5][0].'</h2>
         <p>'.$giu[$n*5-5+$nplus][1].'</p>
       </div>';
@@ -224,6 +229,106 @@ $giu = $stmt6->fetchALL();
   <a class="bot" href="area.php">TORNA ALLA TUA AREA RISERVATA</a>
   <a class="bot" href="index.php">TORNA ALL'INIZIO</a>
 </div>
+
+<script>
+const ctx1 = document.getElementById('PilastriGrafico').getContext('2d');
+new Chart(ctx1, {
+  type: 'bar', // Può essere 'line', 'pie', 'doughnut', 'radar', ecc.
+  data: {
+    labels: <?php echo json_encode(["ENVIRONMENTAL", "SOCIAL", "GOVERNANCE"]); ?>,
+          datasets: [{
+            label: '',
+            data: <?php echo json_encode([$environmental, $social, $governance]); ?>,
+          backgroundColor: ['rgba(64, 192, 64, 0.5)', 'rgba(255, 128, 128, 0.5)', 'rgba(0, 0, 128, 0.5)']
+          }]
+  },
+  options: {
+    responsive: true,
+    color: 'rgb(0, 0, 0)',
+    font: {
+      size: 16
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
+      }
+    }
+  }
+});
+// Definizione grafico 2
+const ctx2 = document.getElementById('MacroTemiGrafico').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar', // Può essere 'line', 'pie', 'doughnut', 'radar', ecc.
+  data: {
+    labels: <?php echo json_encode(["E1", "E2", "E3", "E4", "E5", "S1", "S2", "S3", "S4", "G1"]); ?>,
+    datasets: [{
+      label: '',
+      data: <?php echo json_encode([$e1, $e2, $e3, $e4, $e5, $s1, $s2, $s3, $s4, $g1]); ?>,
+      backgroundColor: ['rgba(64, 192, 64, 0.5)', 'rgba(64, 192, 64, 0.5)', 'rgba(64, 192, 64, 0.5)', 'rgba(64, 192, 64, 0.5)', 'rgba(64, 192, 64, 0.5)', 'rgba(255, 128, 128, 0.5)', 'rgba(255, 128, 128, 0.5)', 'rgba(255, 128, 128, 0.5)', 'rgba(255, 128, 128, 0.5)', 'rgba(0, 0, 128, 0.5)']
+    }]
+  },
+  options: {
+    responsive: true,
+    color: 'rgb(0, 0, 0)',
+    font: {
+      size: 16
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
+      }
+    }
+  }
+});
+// Definizione grafico 3
+const ctx3 = document.getElementById('CategorieGrafico').getContext('2d');
+new Chart(ctx3, {
+  type: 'radar', // Può essere 'line', 'pie', 'doughnut', 'bar', ecc.
+  data: {
+    labels: <?php echo json_encode(["Strategie", "Politiche", "Risorse", "Obiettivi", "Metriche"]); ?>,
+          datasets: [{
+            label: '',
+            data: <?php echo json_encode([$strategie, $politiche, $risorse, $obiettivi, $metriche]); ?>,
+          backgroundColor: 'rgba(0, 128, 0, 0.5)'
+          }]
+  },
+  options: {
+    responsive: true,
+    color: 'rgb(0, 0, 0)',
+    font: {
+      size: 16
+    },
+    scales: {
+      r: {
+        beginAtZero: true,
+        max: 100
+      }
+    }
+  }
+});
+// Definizione grafico 4
+const ctx4 = document.getElementById('RisposteGrafico').getContext('2d');
+new Chart(ctx4, {
+  type: 'pie', // Può essere 'line', 'bar', 'doughnut', 'radar', ecc.
+  data: {
+    labels: <?php echo json_encode(["No", "In parte", "Sì"]); ?>,
+          datasets: [{
+            label: '',
+            data: <?php echo json_encode([round($no/70*100), round($inparte/70*100), round($si/70*100)]); ?>,
+          backgroundColor: ['rgba(255, 0, 0, 0.5)', 'rgba(128, 128, 0, 0.5)', 'rgba(0, 255, 0, 0.5)']
+          }]
+  },
+  options: {
+    responsive: true,
+    color: 'rgb(0, 0, 0)',
+    font: {
+      size: 16
+    }
+  }
+});
+</script>
 
 </body>
 </html>
