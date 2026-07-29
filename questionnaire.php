@@ -68,6 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $messaggio = "<p class='mess' style='color: green;'>Le tue risposte sono state inserite con successo! Ora puoi visualizzare il report:</p>";
     $_SESSION["qualeprova"] = $ipro;
     $link = "<a class='bot' href='results.php'>GUARDA I RISULTATI</a>";
+    $canc = "style='display: none;'";     // parametro per la cancellazione del form una volta concluso
   } else {
     $messaggio = "<p class='mess' style='color: red;'>ERRORE: non è stato possibile salvare le tue risposte.</p>";
   }
@@ -92,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   ?>
   <?php echo $messaggio; ?>
   <?php echo $link; ?>
-  <form action="" method="POST">
+  <form action="" method="POST" <?php echo $canc; ?> >
   <p>Rispondi alle seguenti domande:</p>
   <?php     // REPLICAZIONE DOMANDA PER OGNI ENTRY DELL'ARRAY
   $n=0;     // Indice per la numerazione delle domande

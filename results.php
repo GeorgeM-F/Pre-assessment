@@ -231,9 +231,12 @@ $giu = $stmt6->fetchALL();
 </div>
 
 <script>
+Chart.defaults.font.size = 18;     // imposta le dimensioni dei caratteri di tutti i grafici
+Chart.defaults.scales.radialLinear.pointLabels.font.size = 18;     // come sopra (specifico per grafici di tipo radar)
+Chart.defaults.color = 'rgba(0, 0, 0, 1)';     // imposta il colore dei caratteri di tutti i grafici
 const ctx1 = document.getElementById('PilastriGrafico').getContext('2d');
 new Chart(ctx1, {
-  type: 'bar', // Può essere 'line', 'pie', 'doughnut', 'radar', ecc.
+  type: 'bar',     // tipo di grafico: a barre
   data: {
     labels: <?php echo json_encode(["ENVIRONMENTAL", "SOCIAL", "GOVERNANCE"]); ?>,
           datasets: [{
@@ -244,14 +247,15 @@ new Chart(ctx1, {
   },
   options: {
     responsive: true,
-    color: 'rgb(0, 0, 0)',
-    font: {
-      size: 16
-    },
     scales: {
       y: {
         beginAtZero: true,
         max: 100
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
       }
     }
   }
@@ -259,7 +263,7 @@ new Chart(ctx1, {
 // Definizione grafico 2
 const ctx2 = document.getElementById('MacroTemiGrafico').getContext('2d');
 new Chart(ctx2, {
-  type: 'bar', // Può essere 'line', 'pie', 'doughnut', 'radar', ecc.
+  type: 'bar',     // tipo di grafico: a barre
   data: {
     labels: <?php echo json_encode(["E1", "E2", "E3", "E4", "E5", "S1", "S2", "S3", "S4", "G1"]); ?>,
     datasets: [{
@@ -270,14 +274,15 @@ new Chart(ctx2, {
   },
   options: {
     responsive: true,
-    color: 'rgb(0, 0, 0)',
-    font: {
-      size: 16
-    },
     scales: {
       y: {
         beginAtZero: true,
         max: 100
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
       }
     }
   }
@@ -285,7 +290,7 @@ new Chart(ctx2, {
 // Definizione grafico 3
 const ctx3 = document.getElementById('CategorieGrafico').getContext('2d');
 new Chart(ctx3, {
-  type: 'radar', // Può essere 'line', 'pie', 'doughnut', 'bar', ecc.
+  type: 'radar',     // tipo di grafico: a stella
   data: {
     labels: <?php echo json_encode(["Strategie", "Politiche", "Risorse", "Obiettivi", "Metriche"]); ?>,
           datasets: [{
@@ -296,14 +301,15 @@ new Chart(ctx3, {
   },
   options: {
     responsive: true,
-    color: 'rgb(0, 0, 0)',
-    font: {
-      size: 16
-    },
     scales: {
       r: {
         beginAtZero: true,
         max: 100
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
       }
     }
   }
@@ -311,7 +317,7 @@ new Chart(ctx3, {
 // Definizione grafico 4
 const ctx4 = document.getElementById('RisposteGrafico').getContext('2d');
 new Chart(ctx4, {
-  type: 'pie', // Può essere 'line', 'bar', 'doughnut', 'radar', ecc.
+  type: 'pie',     // tipo di grafico: a torta
   data: {
     labels: <?php echo json_encode(["No", "In parte", "Sì"]); ?>,
           datasets: [{
@@ -321,11 +327,7 @@ new Chart(ctx4, {
           }]
   },
   options: {
-    responsive: true,
-    color: 'rgb(0, 0, 0)',
-    font: {
-      size: 16
-    }
+    responsive: true
   }
 });
 </script>
