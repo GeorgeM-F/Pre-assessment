@@ -82,7 +82,7 @@ if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
   $read->setIncludeCharts(true);
   $spread = $read->load('report_template_simplified.xlsx');
   // INSERIMENTO VALORI
-  $sheet = $spread->getSheetByName('Foglio1');
+  $sheet = $spread->getSheetByName('Risultati');
   $sheet->setCellValue('B1', $complessivo);
   $sheet->setCellValue('B2', $environmental);
   $sheet->setCellValue('B3', $social);
@@ -105,6 +105,20 @@ if (isset($_GET['azione']) && $_GET['azione'] === 'scarica') {
   $sheet->setCellValue('B20', $no/70*100);
   $sheet->setCellValue('B21', $inparte/70*100);
   $sheet->setCellValue('B22', $si/70*100);
+  // CARICAMENTO TABELLA RISPOSTE (DAL DATABASE)
+  $sqli6 = "SELECT risposta, descrizione, autovalutazione, priorità, note FROM risposte_preassessment WHERE id_azienda = ".$_SESSION["tuoid"]." AND id_prova = ".$_SESSION["qualeprova"];
+  $stmt6 = $pdo->prepare($sqli6);
+  $stmt6->execute();
+  $tabrisp = $stmt6->fetchALL(PDO::FETCH_NUM);
+  // INSERIMENTO RISPOSTE
+  $sheet2 = $spread->getSheetByName('Risposte');
+  foreach (range(0, 69) as $i) {
+    $sheet2->setCellValue('B'.($i+2), $tabrisp[$i][0]);
+    $sheet2->setCellValue('C'.($i+2), $tabrisp[$i][1]);
+    $sheet2->setCellValue('D'.($i+2), $tabrisp[$i][2]);
+    $sheet2->setCellValue('E'.($i+2), $tabrisp[$i][3]);
+    $sheet2->setCellValue('F'.($i+2), $tabrisp[$i][4]);
+  }
   // (...)
   if (ob_get_level()) {ob_end_clean();}     // Pulisce il buffer di output
   header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');     // Imposta le intestazioni HTTP per il download

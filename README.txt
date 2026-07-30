@@ -21,3 +21,10 @@ I seguenti elementi:
 - composer.json
 - composer.lock
 sono stati generati dall'installazione di Composer e PhpSpreadsheet.
+
+Linguaggi utilizzati:
+PHP (per il lato backend (logica))
+SQL (per il lato backend (interazione col database))
+HTML (per il lato frontend (contenuti))
+CSS (per il lato frontend (aspetto))
+JavaScript ((tramite connessione a una libreria esterna) per il lato frontend (grafici))
