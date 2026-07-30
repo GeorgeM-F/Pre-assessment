@@ -37,7 +37,6 @@ $datearr = $datequer->fetchAll(PDO::FETCH_COLUMN);
     <h2>Dati azienda:</h2>
     <hr>
     <?php
-      echo "<p>ID azienda: <strong>".$_SESSION["tuoid"]."</strong></p>";     // Elimina questa riga una volta finito il progetto
       echo "<p>Ragione sociale: <strong>".$_SESSION["tuonome"]."</strong></p>";
       echo "<p>Partita IVA: <strong>".$_SESSION["tuaiva"]."</strong></p>";
       echo "<p>Codice fiscale: <strong>".$_SESSION["tuocodice"]."</strong></p>";

@@ -148,47 +148,46 @@ $giu = $stmt6->fetchALL();
     <div class="oriz">
       <div class="risez">
         <h1>Pilastri ESG</h1>
-        <?php //echo "<h2>Environmental:   ".round($environmental)."%</h2>" ?>
-        <?php //echo "<h2>Social:   ".round($social)."%</h2>" ?>
-        <?php //echo "<h2>Governance:   ".round($governance)."%</h2>" ?>
         <canvas id="PilastriGrafico" width="400" height="200"></canvas>
       </div>
       <div class="risez">
         <h1>Grado di priorità per ESRS specifico</h1>
-        <?php //echo "<h2>E1:   ".round($e1)."%</h2>" ?>
-        <?php //echo "<h2>E2:   ".round($e2)."%</h2>" ?>
-        <?php //echo "<h2>E3:   ".round($e3)."%</h2>" ?>
-        <?php //echo "<h2>E4:   ".round($e4)."%</h2>" ?>
-        <?php //echo "<h2>E5:   ".round($e5)."%</h2>" ?>
-        <?php //echo "<h2>S1:   ".round($s1)."%</h2>" ?>
-        <?php //echo "<h2>S2:   ".round($s2)."%</h2>" ?>
-        <?php //echo "<h2>S3:   ".round($s3)."%</h2>" ?>
-        <?php //echo "<h2>S4:   ".round($s4)."%</h2>" ?>
-        <?php //echo "<h2>G1:   ".round($g1)."%</h2>" ?>
         <canvas id="MacroTemiGrafico" width="400" height="200"></canvas>
       </div>
     </div>
     <div class="oriz">
       <div class="risez">
         <h1>Prioritizzazione delle categorie</h1>
-        <?php //echo "<h2>Strategie:   ".round($strategie)."%</h2>" ?>
-        <?php //echo "<h2>Politiche:   ".round($politiche)."%</h2>" ?>
-        <?php //echo "<h2>Risorse:   ".round($risorse)."%</h2>" ?>
-        <?php //echo "<h2>Obiettivi:   ".round($obiettivi)."%</h2>" ?>
-        <?php //echo "<h2>Metriche:   ".round($metriche)."%</h2>" ?>
         <canvas id="CategorieGrafico" width="400" height="200"></canvas>
       </div>
       <div class="risez">
         <h1>Distribuzione delle risposte al questionario</h1>
-        <?php //echo "<h2>No:   ".round($no/70*100)."%</h2>" ?>
-        <?php //echo "<h2>In parte:   ".round($inparte/70*100)."%</h2>" ?>
-        <?php //echo "<h2>Sì:   ".round($si/70*100)."%</h2>" ?>
         <canvas id="RisposteGrafico" width="400" height="200"></canvas>
       </div>
     </div>
   </div>
   <div class="sez">
     <h1>GIUDIZI FINALI E SUGGERIMENTI</h1>
+    <div class="sez">
+    <h2>Legenda:</h2>
+    <div style="display: flex">
+      <div class="risez" style="border-color: rgba(192,64,64, 1); background-color: rgba(192,64,64, 0.5)">
+        <h2>Scarso</p>
+      </div>
+      <div class="risez" style="border-color: rgba(192,128,64, 1); background-color: rgba(192,128,64, 0.5)">
+        <h2>Carente</p>
+      </div>
+      <div class="risez" style="border-color: rgba(192,192,64, 1); background-color: rgba(192,192,64, 0.5)">
+        <h2>Accettabile</p>
+      </div>
+      <div class="risez" style="border-color: rgba(128,192,64, 1); background-color: rgba(128,192,64, 0.5)">
+        <h2>Soddisfacente</p>
+      </div>
+      <div class="risez" style="border-color: rgba(64,192,64, 1); background-color: rgba(64,192,64, 0.5)">
+        <h2>Eccellente</p>
+      </div>
+    </div>
+    </div>
     <?php     // REPLICAZIONE GIUDIZI PER OGNI AREA TEMATICA
     $temars = [$e1, $e2, $e3, $e4, $e5, $s1, $s2, $s3, $s4, $g1];
     $n=0;     // Indice per la numerazione dei giudizi

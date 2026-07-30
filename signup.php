@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <div>
       <label>Data creazione:</label>
-      <input type="text" name="data" required>
+      <input type="date" name="data" required>
     </div>
     <div>
       <label>Sede azienda:</label>
@@ -94,10 +94,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div>
       <label>Tipo di impresa:</label>
       <select name="tipo" required>
-        <option value="micro">Micro-impresa (meno di 10 impiegati)</option>
-        <option value="mini">Piccola (tra 10 e 49 impiegati)</option>
-        <option value="mid">Media (tra 50 e 249 impiegati)</option>
-        <option value="maxi">Grande (almeno 250 impiegati)</option>
+        <option value="Micro-impresa">Micro-impresa (meno di 10 impiegati)</option>
+        <option value="Piccola impresa">Piccola (tra 10 e 49 impiegati)</option>
+        <option value="Media impresa">Media (tra 50 e 249 impiegati)</option>
+        <option value="Grande impresa">Grande (almeno 250 impiegati)</option>
       </select>
     </div>
     <div>
@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <div>
       <label>Password:</label>
-      <input type="text" name="password" required>
+      <input type="password" name="password" required>
     </div>
     <button type="submit">FINITO</button>
     <?php echo $messaggio; ?>

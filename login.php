@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <div>
       <label>Password:</label>
-      <input type="text" name="password" required>
+      <input type="password" name="password" required>
     </div>
     <button type="submit">LOGIN</button>
     <?php echo $messaggio; ?>
