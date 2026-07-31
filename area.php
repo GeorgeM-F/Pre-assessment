@@ -1,5 +1,6 @@
 <?php
 session_start();     // Continua sessione precedente
+$_SESSION['domatt'] = 0;     // Azzeramento indice "domanda attuale"
 try {
   $pdo = new PDO("sqlite:database.db");
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -52,7 +53,7 @@ $datearr = $datequer->fetchAll(PDO::FETCH_COLUMN);
     <h2>Questionari disponibili:</h2>
     <div class="sez">
       <h2>Pre-assessment</h2>
-      <a class="bot" href="questionnaire.php">Nuova prova</a>
+      <a class="bot" href="questionnaireB.php">Nuova prova</a>
       <p>Prove precedentemente effettuate:</p>
       <?php     // REPLICAZIONE LINK PER OGNI ENTRY DELL'ARRAY
       if (count($linkarr)==0) {

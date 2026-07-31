@@ -4,12 +4,13 @@ Database:
 - database.db
 
 Pagine web:
-- index.php         (pagina di ingresso)
-- signup.php        (registrazione)
-- login.php         (login)
-- area.php          (area riservata (template))
-- questionnaire.php (questionario con le 70 domande)
-- results.php       (risultati del questionario (template))
+- index.php          (pagina di ingresso)
+- signup.php         (registrazione)
+- login.php          (login)
+- area.php           (area riservata (template))
+- questionnaireA.php (questionario con le 70 domande (versione vecchia, a form unificato))
+- questionnaireB.php (questionario con le 70 domande (versione nuova, a form separati))
+- results.php        (risultati del questionario (template))
 
 Altro:
 - .git                           (cartella di git)
