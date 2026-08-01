@@ -128,7 +128,7 @@ if ($_SESSION['domatt'] > 63 && $_SESSION['domatt'] < 71) {
       </div>
       <div>
         <label><br>Note (facoltativo):<br></label>
-        <input type="text" name="'.$n.'not">
+        <input type="text" name="not">
       </div>
 
     <button type="submit">Prossima domanda</button>
