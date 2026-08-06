@@ -23,6 +23,25 @@ body {
   padding: 6px 6px 6px 6px;
 }
 
+.vis {
+  display: inline;
+  border-style: solid;
+  border-width: 4px;
+  border-radius: 12px;
+  border-color: rgba(64,192,64,1);
+  background-color: rgba(64,192,64,0.25);
+  font-size: 16px;
+  color: rgba(255,255,255,1);
+}
+
+.info {
+  display: none;
+}
+
+.vis:hover ~ .info {
+  display: block;
+}
+
 textarea, select, option, input {
   margin: 6px 6px 6px 6px;
   border-style: solid;

@@ -14,6 +14,9 @@ $link = "";
 
 $domquer = $pdo->query("SELECT domanda FROM domande");     // Fa una query di tutte le domande presenti nella tabella...
 $domarr = $domquer->fetchAll(PDO::FETCH_COLUMN);     // ...e le salva come array.
+$infquer = $pdo->query("SELECT info FROM domande");     // Fa una query di tutti i suggerimenti presenti nella tabella...
+$infarr = $infquer->fetchAll(PDO::FETCH_COLUMN);     // ...e li salva come array.
+
 
 if ($_SESSION['domatt'] == 1) {
   // Aggiunta nuova prova e selezione id prova:
@@ -58,13 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
 }
 
-//echo "   id azienda (sessione) = ".$_SESSION["tuoid"];
-//echo "   id azienda (variabile) = ".$iaz;
-//echo "   id prova (sessione) = ".$_SESSION["numpro"];
-//echo "   id prova (variabile) = ".$ipro;
-//echo "   id domanda (sessione) = ".$_SESSION["domatt"];
-//echo "   id domanda (variabile) = ".$idom;
-
 if ($_SESSION['domatt'] < 33) {
   $sezcol = 'rgba(64, 192, 64, 0.5)';
   $sezcolb = 'rgba(64, 192, 64, 1)';
@@ -105,6 +101,8 @@ if ($_SESSION['domatt'] > 63 && $_SESSION['domatt'] < 71) {
   <form action="" method="POST" style="background-color: <?php echo $sezcol; ?>; border-color: <?php echo $sezcolb; ?>; display: <?php echo $canc; ?>;">
       <p>Domanda <?php echo $_SESSION['domatt'] ?> di 70:</p>
       <h2><?php echo $domarr[$_SESSION['domatt']-1] ?></h2>
+      <div class="vis">SUGGERIMENTI?</div>
+      <p class="info"><?php echo $infarr[$_SESSION['domatt']-1] ?></p>
       <input type="hidden" name="idom" value="<?php echo $_SESSION['domatt']; ?>">
       <div>
         <label><br>Risposta:<br></label>
